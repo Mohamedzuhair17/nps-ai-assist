@@ -74,22 +74,61 @@ export default function ChatAssistant() {
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response
-    await new Promise((r) => setTimeout(r, 1200 + Math.random() * 800));
+    try {
+      // Call the backend RAG API
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: text.trim(),
+          language: language === "English" ? null : language.toLowerCase().substring(0, 2), // Convert to ISO code
+          top_k: 5,
+          temperature: 0.7,
+        }),
+      });
 
-    const key = text.trim().toLowerCase().replace(/[?!]/g, "").trim();
-    const response =
-      mockResponses[key] ||
-      `Thank you for your question about "${text}". In a production environment, this would connect to an AI model to provide a detailed, accurate response about NPS.\n\nTo enable AI-powered responses, please connect Lovable Cloud and configure the AI integration.\n\nIn the meantime, you can explore our **Learn NPS** section or use the **Pension Calculator** for instant projections!`;
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
 
-    const aiMsg: Message = {
-      id: (Date.now() + 1).toString(),
-      role: "assistant",
-      content: response,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, aiMsg]);
-    setIsTyping(false);
+      const data = await response.json();
+
+      const aiMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: data.response,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, aiMsg]);
+
+      // Log detected language for debugging
+      if (data.detected_language && data.detected_language !== "en") {
+        console.log(`Detected language: ${data.detected_language}`);
+      }
+
+    } catch (error) {
+      console.error("Error calling RAG API:", error);
+
+      // Fallback to mock response if API fails
+      const key = text.trim().toLowerCase().replace(/[?!]/g, "").trim();
+      const fallbackResponse =
+        mockResponses[key] ||
+        `I apologize, but I'm having trouble connecting to the AI service. Please ensure the backend server is running at http://localhost:8000.\n\nError: ${error instanceof Error ? error.message : "Unknown error"}\n\nYou can start the backend by running:\ncd backend\npython -m uvicorn main:app --reload`;
+
+      const aiMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: fallbackResponse,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, aiMsg]);
+
+      toast.error("Failed to connect to AI service. Using fallback response.");
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleVoice = () => {
@@ -224,11 +263,10 @@ export default function ChatAssistant() {
                     className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                        msg.role === "user"
+                      className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === "user"
                           ? "bg-chat-user text-chat-user-foreground"
                           : "bg-chat-ai text-chat-ai-foreground"
-                      }`}
+                        }`}
                     >
                       {/* Simple markdown-ish rendering */}
                       {msg.content.split("\n").map((line, i) => (

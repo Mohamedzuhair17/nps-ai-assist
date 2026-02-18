@@ -1,0 +1,28 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+python-multipart==0.0.12
+pydantic==2.9.2
+pydantic-settings==2.6.0
+
+# Language Detection
+langdetect==1.0.9
+
+# Translation (NLLB)
+transformers==4.46.0
+torch==2.5.1
+sentencepiece==0.2.0
+sacremoses==0.1.1
+
+# Embeddings & Vector DB
+sentence-transformers==3.2.1
+chromadb==0.5.23
+faiss-cpu==1.9.0
+
+# LLM Integration (Ollama)
+ollama==0.4.4
+
+# Utilities
+python-dotenv==1.0.1
+numpy==1.26.4
+pandas==2.2.3
+colorama==0.4.6
