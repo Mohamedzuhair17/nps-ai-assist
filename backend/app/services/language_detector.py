@@ -22,6 +22,20 @@ LANG_CODE_MAP = {
 # Reverse mapping for NLLB to ISO
 NLLB_TO_ISO = {v: k for k, v in LANG_CODE_MAP.items()}
 
+# Human readable language names
+LANG_NAME_MAP = {
+    "en": "English",
+    "ta": "Tamil",
+    "te": "Telugu",
+    "hi": "Hindi",
+    "ml": "Malayalam",
+    "bn": "Bengali",
+    "mr": "Marathi",
+    "gu": "Gujarati",
+    "kn": "Kannada",
+    "pa": "Punjabi",
+}
+
 
 class LanguageDetector:
     """Detects the language of input text"""
@@ -130,3 +144,7 @@ class LanguageDetector:
             ISO 639-1 language code (e.g., 'en', 'ta')
         """
         return NLLB_TO_ISO.get(nllb_code, "en")
+
+    def get_language_name(self, iso_code: str) -> str:
+        """Get full English name of the language (e.g., 'ta' -> 'Tamil')"""
+        return LANG_NAME_MAP.get(iso_code, "English")

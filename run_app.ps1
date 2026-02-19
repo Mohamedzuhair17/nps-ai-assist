@@ -1,6 +1,6 @@
 $ErrorActionPreference = "SilentlyContinue"
 
-Write-Host "🚀 Starting NPS-Wise Multilingual Chatbot..." -ForegroundColor Cyan
+Write-Host "🚀 Starting NPS - AI Assistant..." -ForegroundColor Cyan
 
 # 1. Start Ollama (if not running)
 if (!(Get-Process "ollama" -ErrorAction SilentlyContinue)) {
@@ -14,12 +14,12 @@ else {
 
 # 2. Start Backend
 Write-Host "🐍 Starting Backend on http://localhost:8000..." -ForegroundColor Yellow
-$backendProcess = Start-Process -FilePath "powershell" -ArgumentList "-NoExit", "-Command", "cd backend; .\venv\Scripts\activate; python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000" -PassThru
+Start-Process -FilePath "powershell" -ArgumentList "-NoExit", "-Command", "cd backend; .\venv\Scripts\activate; python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 Start-Sleep -Seconds 5
 
 # 3. Start Frontend
 Write-Host "⚛️  Starting Frontend on http://localhost:8080..." -ForegroundColor Yellow
-$frontendProcess = Start-Process -FilePath "powershell" -ArgumentList "-NoExit", "-Command", "npm run dev" -PassThru
+Start-Process -FilePath "powershell" -ArgumentList "-NoExit", "-Command", "npm run dev"
 Start-Sleep -Seconds 5
 
 # 4. Open Browser

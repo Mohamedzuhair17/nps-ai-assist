@@ -72,7 +72,7 @@ export default function Index() {
                 <MessageSquare className="h-5 w-5" /> Start Chat
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="gap-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+            <Button asChild size="lg" variant="outline" className="gap-2 bg-card text-primary hover:bg-card/90">
               <Link to="/calculator">
                 <Calculator className="h-5 w-5" /> Calculate Pension
               </Link>

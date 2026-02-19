@@ -59,8 +59,20 @@ export default function ChatAssistant() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+    const scrollTimer = setTimeout(() => {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, 0);
+    return () => clearTimeout(scrollTimer);
+  }, [messages]);
+
+  useEffect(() => {
+    if (isTyping) {
+      const scrollTimer = setTimeout(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 100);
+      return () => clearTimeout(scrollTimer);
+    }
+  }, [isTyping]);
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -252,7 +264,7 @@ export default function ChatAssistant() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-6">
+          <div className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth">
             <div className="mx-auto max-w-2xl space-y-4">
               <AnimatePresence>
                 {messages.map((msg) => (
@@ -264,8 +276,8 @@ export default function ChatAssistant() {
                   >
                     <div
                       className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.role === "user"
-                          ? "bg-chat-user text-chat-user-foreground"
-                          : "bg-chat-ai text-chat-ai-foreground"
+                        ? "bg-chat-user text-chat-user-foreground"
+                        : "bg-chat-ai text-chat-ai-foreground"
                         }`}
                     >
                       {/* Simple markdown-ish rendering */}

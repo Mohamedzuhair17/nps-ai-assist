@@ -1,203 +1,88 @@
-# NPS-Wise - Multilingual AI Chatbot 🚀
+# NPS - AI Assistant 🚀
 
-A comprehensive National Pension System (NPS) platform with an intelligent multilingual chatbot powered by RAG (Retrieval-Augmented Generation) and Llama 3.
+An intelligent, multilingual AI-powered assistant designed to simplify information access for the National Pension System (NPS). Built with a focus on accessibility and ease of use, this platform uses state-of-the-art AI to help users navigate their pension planning in their native language.
 
-## ✨ Features
+## 🌟 Overview
 
-### 🤖 Multilingual AI Chat Assistant
-- **10+ Language Support**: English, Tamil, Hindi, Telugu, Malayalam, Bengali, Marathi, Gujarati, Kannada, Punjabi
-- **Automatic Language Detection**: Detects user's language and responds in the same language
-- **RAG-Powered Responses**: Retrieves relevant information from a comprehensive NPS knowledge base
-- **Llama 3 Integration**: Powered by Llama 3 running locally via Ollama
-- **Real-time Translation**: Uses Facebook's NLLB-200 model for high-quality translation
+The **NPS - AI Assistant** is a comprehensive solution that combines a modern frontend with a powerful RAG (Retrieval-Augmented Generation) backend. It's designed to provide accurate, context-aware information about NPS through a natural chat interface.
 
-### 📊 Additional Features
-- NPS Information Portal
-- Pension Calculator
-- Tax Benefits Guide
-- Account Management
-- Modern, Responsive UI
+### 🤖 Intelligent Chat Assistant
+- **Multilingual Support**: Communicates in 10+ major Indian languages (Tamil, Hindi, Telugu, Malayalam, Bengali, etc.).
+- **Automatic Language Detection**: Seamlessly switches to the user's preferred language.
+- **RAG Architecture**: Responses are grounded in a verified NPS knowledge base, ensuring high accuracy.
+- **Local LLM Inference**: Powered by Llama 3 running locally via Ollama for privacy and speed.
+- **High-Quality Translation**: Integrates Facebook's NLLB-200 model for precise cross-language communication.
 
-## 🏗️ Tech Stack
+### 📊 Key Features
+- **Information Portal**: Access structured data on NPS rules, tiers, and benefits.
+- **Pension Calculator**: Estimate future returns and monthly pension amounts.
+- **Tax Guide**: Specialized assistance for tax-saving benefits under Section 80C and 80CCD.
+- **Responsive Design**: Premium UI built with Tailwind CSS and shadcn/ui.
+
+## 🏗️ Technical Stack
 
 ### Frontend
-- **React 18** with TypeScript
-- **Vite** for fast development
-- **Tailwind CSS** for styling
-- **shadcn-ui** components
-- **Framer Motion** for animations
+- **React 18** (TypeScript)
+- **Vite** (Build Tool)
+- **Tailwind CSS** (Styling)
+- **shadcn/ui** (Components)
+- **Framer Motion** (Animations)
 
-### Backend (NEW!)
-- **Python 3.10+** with FastAPI
-- **Ollama** for local LLM inference (Llama 3)
-- **NLLB-200** for translation
-- **ChromaDB** for vector storage
-- **Sentence Transformers** (BGE) for embeddings
-- **langdetect** for language detection
+### Backend
+- **FastAPI** (Python 3.10+)
+- **Ollama** (Llama 3 Local Inference)
+- **ChromaDB** (Vector Database)
+- **Sentence Transformers** (BGE Embeddings)
+- **NLLB-200** (Machine Translation)
+- **langdetect** (Language Identification)
 
-## 🚀 Quick Start
+## 🚀 Quick Setup
 
 ### Prerequisites
-1. Install [Ollama](https://ollama.ai/) and pull Llama 3:
+1. **Ollama**: [Download Ollama](https://ollama.ai/) and pull the model:
    ```bash
    ollama pull llama3
    ```
+2. **Environment**: Python 3.10+ and Node.js 18+ are required.
 
-2. Ensure you have:
-   - Python 3.10+
-   - Node.js 18+
-   - 8GB+ RAM
-
-### Installation
-
-#### 1. Backend Setup
-```bash
+### 1. Backend Configuration
+Navigate to the `backend` folder and run the automated setup script:
+```powershell
 cd backend
-.\start.ps1  # Windows PowerShell (automated setup)
-
-# OR manually:
-python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Linux/Mac
-pip install -r requirements.txt
-python scripts\init_vector_db.py
-python -m uvicorn main:app --reload
+.\start.ps1
 ```
+*Note: This script initializes the virtual environment, installs dependencies, and prepares the vector database.*
 
-#### 2. Frontend Setup
+### 2. Frontend Launch
+Return to the project root and start the development server:
 ```bash
-# In project root
 npm install
 npm run dev
 ```
 
-#### 3. Access the Application
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
+### 3. Usage
+- **Frontend**: http://localhost:5173
+- **API Documentation**: http://localhost:8000/docs
 
-## 📚 Documentation
+## 📂 Project Structure
 
-- **[QUICK_START.md](QUICK_START.md)** - Get started in 5 minutes
-- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Detailed setup instructions
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Complete technical overview
-- **[backend/README.md](backend/README.md)** - Backend documentation
-
-## 🧪 Testing
-
-### Test Backend
-```bash
-cd backend
-python test_backend.py
 ```
-
-### Test Chat in Different Languages
-- English: "What is NPS?"
-- Tamil: "என்பிஎஸ் என்றால் என்ன?"
-- Hindi: "NPS क्या है?"
-- Telugu: "NPS అంటే ఏమిటి?"
+nps-ai-assistant/
+├── backend/              # Python FastAPI backend & RAG pipeline
+│   ├── app/              # Core application logic
+│   ├── scripts/          # DB initialization and test scripts
+│   └── main.py           # API Entry point
+├── src/                  # React Vite frontend
+│   ├── components/       # UI Components
+│   └── pages/            # Application views
+├── SETUP_GUIDE.md        # Detailed installation steps
+└── QUICK_START.md        # 5-minute fast track
+```
 
 ## 🌍 Supported Languages
-
-| Language | Code | Native Name |
-|----------|------|-------------|
-| English | en | English |
-| Tamil | ta | தமிழ் |
-| Hindi | hi | हिन्दी |
-| Telugu | te | తెలుగు |
-| Malayalam | ml | മലയാളം |
-| Bengali | bn | বাংলা |
-| Marathi | mr | मराठी |
-| Gujarati | gu | ગુજરાતી |
-| Kannada | kn | ಕನ್ನಡ |
-| Punjabi | pa | ਪੰਜਾਬੀ |
-
-## 📊 System Architecture
-
-```
-User (Any Language)
-    ↓
-React Frontend
-    ↓
-FastAPI Backend
-    ├── Language Detection
-    ├── Translation (NLLB)
-    ├── Vector Search (ChromaDB)
-    ├── LLM Generation (Llama 3)
-    └── Response Translation
-    ↓
-Ollama Server (Llama 3)
-```
-
-## 🔧 Configuration
-
-### Backend (.env)
-```env
-OLLAMA_BASE_URL=http://127.0.0.1:11434
-OLLAMA_MODEL=llama3
-EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
-NLLB_MODEL=facebook/nllb-200-distilled-600M
-API_PORT=8000
-```
-
-## 📁 Project Structure
-
-```
-nps-wise/
-├── backend/              # Python FastAPI backend
-│   ├── app/
-│   │   ├── services/    # RAG pipeline components
-│   │   ├── config.py
-│   │   └── models.py
-│   ├── scripts/
-│   ├── main.py
-│   └── requirements.txt
-├── src/                 # React frontend
-│   ├── components/
-│   ├── pages/
-│   └── ...
-├── public/
-├── SETUP_GUIDE.md
-├── QUICK_START.md
-└── package.json
-```
-
-## 🐛 Troubleshooting
-
-### "Cannot connect to Ollama"
-```bash
-ollama list  # Check if Ollama is running
-ollama pull llama3  # Pull the model if missing
-```
-
-### "Failed to connect to AI service"
-- Ensure backend is running: http://localhost:8000/health
-- Check CORS settings in backend/.env
-
-### Memory Issues
-- Close other applications
-- Ensure 8GB+ RAM available
-- Restart your computer
-
-## 🚀 Deployment
-
-See [SETUP_GUIDE.md](SETUP_GUIDE.md) for production deployment instructions.
-
-## 📝 License
-
-This project is part of the NPS-Wise application.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read the setup guide before contributing.
-
-## 📧 Support
-
-For issues or questions:
-1. Check the troubleshooting section
-2. Review the documentation
-3. Check backend logs and browser console
+The assistant is optimized for:
+- English (en), Tamil (ta), Hindi (hi), Telugu (te), Malayalam (ml), Bengali (bn), Marathi (mr), Gujarati (gu), Kannada (kn), Punjabi (pa).
 
 ---
 
-**Built with ❤️ for making NPS information accessible in every language**
+**Crafted with passion to make NPS information accessible to everyone.**

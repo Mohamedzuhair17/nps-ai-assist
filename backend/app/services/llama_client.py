@@ -34,7 +34,8 @@ class LlamaClient:
         context_documents: List[str],
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
-        max_tokens: int = 1024
+        max_tokens: int = 1024,
+        target_language: str = "English"
     ) -> str:
         """
         Generate a response using Llama 3 with RAG context
@@ -45,9 +46,7 @@ class LlamaClient:
             system_prompt: Optional system prompt
             temperature: Sampling temperature (0.0 to 1.0)
             max_tokens: Maximum tokens to generate
-            
-        Returns:
-            Generated response text
+            target_language: Language to respond in
         """
         if not query or not query.strip():
             logger.warning("Empty query provided for generation")
@@ -58,14 +57,10 @@ class LlamaClient:
         
         # Build the prompt
         if system_prompt is None:
-            system_prompt = """You are an expert assistant for the National Pension System (NPS) in India. 
-Your role is to provide accurate, helpful, and detailed information about NPS including:
-- Account opening and management
-- Tax benefits and regulations
-- Contribution rules and limits
-- Withdrawal and pension rules
-- Investment options and fund managers
-- Calculations and projections
+            system_prompt = f"""You are an expert assistant for the National Pension System (NPS) in India. 
+Your role is to provide accurate, helpful, and detailed information about NPS.
+You MUST provide your entire response in {target_language}.
+Even if the context is in English, you must translate the relevant information and respond ONLY in {target_language}.
 
 Use the provided context to answer questions accurately. If you're not sure about something, say so.
 Be concise but comprehensive. Use bullet points and formatting when helpful."""
@@ -73,12 +68,12 @@ Be concise but comprehensive. Use bullet points and formatting when helpful."""
         # Construct the full prompt
         full_prompt = f"""{system_prompt}
 
-Context from NPS knowledge base:
+Context from NPS knowledge base (in English):
 {context}
 
 User Question: {query}
 
-Please provide a detailed and accurate answer based on the context above:"""
+Please provide a detailed and accurate answer in {target_language} based on the context above:"""
         
         try:
             logger.info(f"Generating response for query: {query[:100]}...")

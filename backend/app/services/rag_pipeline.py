@@ -62,9 +62,13 @@ class RAGPipeline:
         Returns:
             Dictionary containing response and metadata
         """
+        import time
+        start_time = time.time()
+        
         try:
             # Step 1: Detect language
             # Always check script language first for robustness against UI defaults
+            t_detect_start = time.time()
             script_lang = self.language_detector.detect_script_language(query)
             
             if script_lang:
@@ -79,52 +83,74 @@ class RAGPipeline:
             else:
                 user_language = "en"
             
+            t_detect_end = time.time()
+            logger.info(f"Time: Language Detection: {t_detect_end - t_detect_start:.4f}s")
+            
             # Get NLLB language codes
             user_lang_nllb = self.language_detector.get_nllb_code(user_language)
             
             # Step 2: Translate query to English (if not already English)
+            t_translate_q_start = time.time()
             if user_language != "en":
                 logger.info(f"Translating query from {user_language} to English")
                 english_query = self.translator.translate_to_english(query, user_lang_nllb)
             else:
                 english_query = query
+            t_translate_q_end = time.time()
+            logger.info(f"Time: Query Translation: {t_translate_q_end - t_translate_q_start:.4f}s")
             
             logger.info(f"English query: {english_query}")
             
             # Step 3: Retrieve relevant documents
+            t_retrieve_start = time.time()
             logger.info(f"Retrieving top {top_k} documents")
             retrieved_docs = self.vector_store.search(english_query, top_k=top_k)
             
             # Extract document texts
             context_documents = [doc['document'] for doc in retrieved_docs]
+            t_retrieve_end = time.time()
+            logger.info(f"Time: Retrieval: {t_retrieve_end - t_retrieve_start:.4f}s")
             
             logger.info(f"Retrieved {len(context_documents)} documents")
             
+            # Get language name for LLM
+            user_lang_name = self.language_detector.get_language_name(user_language)
+            
             # Step 4: Generate response using Llama 3
-            logger.info("Generating response with Llama 3")
-            english_response = self.llama_client.generate_response(
+            t_generate_start = time.time()
+            logger.info(f"Generating response with Llama 3 in {user_lang_name}")
+            generated_response = self.llama_client.generate_response(
                 query=english_query,
                 context_documents=context_documents,
-                temperature=temperature
+                temperature=temperature,
+                target_language=user_lang_name
             )
+            t_generate_end = time.time()
+            logger.info(f"Time: Generation: {t_generate_end - t_generate_start:.4f}s")
             
-            # Step 5: Translate response back to user's language (if needed)
-            if user_language != "en":
-                logger.info(f"Translating response from English to {user_language}")
-                final_response = self.translator.translate_from_english(
-                    english_response,
-                    user_lang_nllb
-                )
-            else:
-                final_response = english_response
+            # Step 5: (Optimized) Language is already handled by LLM directly
+            final_response = generated_response
+            t_translate_r_start = t_translate_r_end = time.time()
+            logger.info("Skipping post-generation translation (handled by LLM)")
+            
+            total_time = time.time() - start_time
+            logger.info(f"Pipeline Timing: Total={total_time:.2f}s, Detect={t_detect_end-t_detect_start:.2f}s, TransQ={t_translate_q_end-t_translate_q_start:.2f}s, Search={t_retrieve_end-t_retrieve_start:.2f}s, LLM={t_generate_end-t_generate_start:.2f}s")
             
             # Prepare result
             result = {
                 "response": final_response,
                 "detected_language": user_language,
                 "english_query": english_query,
-                "english_response": english_response,
+                "generated_response": generated_response,
                 "retrieved_documents": len(context_documents),
+                "timing": {
+                    "total": round(total_time, 2),
+                    "detection": round(t_detect_end - t_detect_start, 2),
+                    "translation_q": round(t_translate_q_end - t_translate_q_start, 2),
+                    "retrieval": round(t_retrieve_end - t_retrieve_start, 2),
+                    "generation": round(t_generate_end - t_generate_start, 2),
+                    "translation_r": round(t_translate_r_end - t_translate_r_start, 2)
+                },
                 "sources": [
                     {
                         "id": doc['id'],
